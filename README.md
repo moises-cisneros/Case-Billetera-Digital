@@ -1,7 +1,8 @@
 # CASE - Billetera Digital
 
 Una aplicación de billetera digital desarrollada en Flutter para el mercado boliviano.
-
+## Backend
+https://github.com/moises-cisneros/Case-Wallet-Back
 ## Características
 
 - 🔐 Autenticación segura con SMS y PIN
