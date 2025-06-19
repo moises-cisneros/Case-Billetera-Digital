@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:case_digital_wallet/features/auth/domain/entities/user_entity.dart';
 import 'package:case_digital_wallet/features/auth/domain/usecases/login_usecase.dart';
 import 'package:case_digital_wallet/features/auth/domain/usecases/register_usecase.dart';
+import 'package:case_digital_wallet/features/auth/domain/repositories/auth_repository.dart';
 
 // Events
 abstract class AuthEvent extends Equatable {
@@ -11,6 +12,8 @@ abstract class AuthEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class CheckAuthenticationStatus extends AuthEvent {}
 
 class LoginRequested extends AuthEvent {
   final String phoneNumber;
@@ -78,14 +81,37 @@ class AuthError extends AuthState {
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LoginUseCase loginUseCase;
   final RegisterUseCase registerUseCase;
+  final AuthRepository authRepository;
 
   AuthBloc({
     required this.loginUseCase,
     required this.registerUseCase,
+    required this.authRepository,
   }) : super(AuthInitial()) {
+    on<CheckAuthenticationStatus>(_onCheckAuthenticationStatus);
     on<LoginRequested>(_onLoginRequested);
     on<RegisterRequested>(_onRegisterRequested);
     on<LogoutRequested>(_onLogoutRequested);
+
+    // Verificar estado inicial
+    add(CheckAuthenticationStatus());
+  }
+
+  Future<void> _onCheckAuthenticationStatus(
+    CheckAuthenticationStatus event,
+    Emitter<AuthState> emit,
+  ) async {
+    if (await authRepository.isLoggedIn()) {
+      final user = await authRepository.getCurrentUser();
+      if (user != null) {
+        emit(AuthAuthenticated(user));
+      } else {
+        await authRepository.logout();
+        emit(AuthUnauthenticated());
+      }
+    } else {
+      emit(AuthUnauthenticated());
+    }
   }
 
   Future<void> _onLoginRequested(
@@ -93,7 +119,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
-    
+
     try {
       final user = await loginUseCase(event.phoneNumber, event.password);
       emit(AuthAuthenticated(user));
@@ -107,7 +133,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
-    
+
     try {
       final user = await registerUseCase.completeRegistration(
         event.phoneNumber,
@@ -124,6 +150,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     LogoutRequested event,
     Emitter<AuthState> emit,
   ) async {
+    await authRepository.logout();
     emit(AuthUnauthenticated());
   }
 }

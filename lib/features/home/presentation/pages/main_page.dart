@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:convert';
 import 'package:case_digital_wallet/core/theme/app_theme.dart';
 import 'package:case_digital_wallet/core/config/app_config.dart';
+import 'package:case_digital_wallet/features/activity/presentation/pages/activity_page.dart';
+import 'package:case_digital_wallet/features/profile/presentation/pages/profile_page.dart';
+import 'package:case_digital_wallet/features/scanner/presentation/pages/scanner_page.dart';
+import 'package:case_digital_wallet/core/presentation/state/navigation_state.dart';
+import 'package:provider/provider.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -11,46 +17,108 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int _selectedIndex = 0;
-
   // Mock data
   final double _balanceBS = 1250.50;
   final double _balanceUSDT = 45.32;
+  bool _showBalance = true;
 
   @override
   Widget build(BuildContext context) {
+    final navigationState = Provider.of<NavigationState>(context);
+
     return Scaffold(
       body: SafeArea(
-        child: _selectedIndex == 0 ? _buildHomeTab() : _buildActivityTab(),
+        child: IndexedStack(
+          index: navigationState.selectedIndex,
+          children: [
+            _buildHomeTab(),
+            const ActivityPage(),
+            const SizedBox(),
+            const ProfilePage(),
+          ],
+        ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppTheme.primaryColor,
-        unselectedItemColor: AppTheme.textTertiary,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Inicio',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'Actividad',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.qr_code_scanner),
-            label: 'Escanear',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-        ],
+      bottomNavigationBar: navigationState.showBottomBar
+          ? BottomNavigationBar(
+              currentIndex: navigationState.selectedIndex,
+              onTap: (index) {
+                if (index == 2) {
+                  _showScanner();
+                } else {
+                  navigationState.setSelectedIndex(index);
+                }
+              },
+              type: BottomNavigationBarType.fixed,
+              selectedItemColor: AppTheme.primaryColor,
+              unselectedItemColor: AppTheme.textTertiary,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Inicio',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.history),
+                  label: 'Actividad',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.qr_code_scanner),
+                  label: 'Escanear',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: 'Perfil',
+                ),
+              ],
+            )
+          : null,
+    );
+  }
+
+  void _showScanner() {
+    final navigationState =
+        Provider.of<NavigationState>(context, listen: false);
+    navigationState.setShowBottomBar(false);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ScannerPage(
+          onQRScanned: (qrData) {
+            navigationState.setShowBottomBar(true);
+            _handleQRData(qrData);
+          },
+        ),
       ),
     );
   }
 
+  void _handleQRData(String qrData) {
+    try {
+      final data = Map<String, dynamic>.from(json.decode(qrData));
+
+      switch (data['type']) {
+        case 'case_payment':
+          context.go('/send-money', extra: data);
+          break;
+        default:
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Código QR no válido'),
+              backgroundColor: AppTheme.errorColor,
+            ),
+          );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Código QR inválido'),
+          backgroundColor: AppTheme.errorColor,
+        ),
+      );
+    }
+  }
+
+  // Tab de inicio
   Widget _buildHomeTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
@@ -82,9 +150,7 @@ class _MainPageState extends State<MainPage> {
                 ],
               ),
               IconButton(
-                onPressed: () {
-                  // TODO: Implement notifications
-                },
+                onPressed: () => context.go('/notifications'),
                 icon: const Icon(Icons.notifications_outlined),
               ),
             ],
@@ -135,11 +201,13 @@ class _MainPageState extends State<MainPage> {
               ),
               IconButton(
                 onPressed: () {
-                  // TODO: Toggle balance visibility
+                  setState(() {
+                    _showBalance = !_showBalance;
+                  });
                 },
-                icon: const Icon(
-                  Icons.visibility,
-                  color: Colors.white70,
+                icon: Icon(
+                  _showBalance ? Icons.visibility : Icons.visibility_off,
+                  color: Colors.white,
                 ),
               ),
             ],
@@ -151,7 +219,9 @@ class _MainPageState extends State<MainPage> {
           Row(
             children: [
               Text(
-                '${AppConfig.currency} ${_balanceBS.toStringAsFixed(2)}',
+                _showBalance
+                    ? '${AppConfig.currency} ${_balanceBS.toStringAsFixed(2)}'
+                    : '${AppConfig.currency} ••••••',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 32,
@@ -184,7 +254,9 @@ class _MainPageState extends State<MainPage> {
                       ),
                     ),
                     Text(
-                      '${AppConfig.cryptoCurrency} ${_balanceUSDT.toStringAsFixed(2)}',
+                      _showBalance
+                          ? '${AppConfig.cryptoCurrency} ${_balanceUSDT.toStringAsFixed(2)}'
+                          : '${AppConfig.cryptoCurrency} ••••••',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -198,8 +270,10 @@ class _MainPageState extends State<MainPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: AppTheme.primaryColor,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -350,21 +424,15 @@ class _MainPageState extends State<MainPage> {
           icon: Icons.arrow_downward,
           title: 'Depósito',
           subtitle: 'Banco Nacional',
-          amount: '+Bs 500.00',
+          amount: 'Bs 500.00',
           isPositive: true,
         ),
-        _buildTransactionItem(
-          icon: Icons.arrow_upward,
-          title: 'Envío a Juan Pérez',
-          subtitle: 'Transferencia',
-          amount: '-Bs 150.00',
-          isPositive: false,
-        ),
+        const SizedBox(height: 12),
         _buildTransactionItem(
           icon: Icons.swap_horiz,
-          title: 'Resguardo USDT',
-          subtitle: 'Conversión',
-          amount: '-Bs 200.00',
+          title: 'Envío',
+          subtitle: 'Juan Pérez',
+          amount: 'Bs -200.00',
           isPositive: false,
         ),
       ],
@@ -379,7 +447,6 @@ class _MainPageState extends State<MainPage> {
     required bool isPositive,
   }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppTheme.surfaceColor,
@@ -434,18 +501,6 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildActivityTab() {
-    return const Center(
-      child: Text(
-        'Actividad',
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
       ),
     );
   }

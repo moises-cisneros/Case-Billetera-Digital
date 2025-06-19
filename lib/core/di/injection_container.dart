@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -67,6 +65,7 @@ Future<void> init() async {
   sl.registerFactory(() => AuthBloc(
         loginUseCase: sl(),
         registerUseCase: sl(),
+        authRepository: sl(),
       ));
   sl.registerFactory(() => WalletBloc(
         getBalanceUseCase: sl(),
