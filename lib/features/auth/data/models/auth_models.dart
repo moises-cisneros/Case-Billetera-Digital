@@ -65,6 +65,20 @@ class LoginRequest {
 }
 
 @JsonSerializable()
+class GoogleSignInRequest {
+  final String idToken;
+
+  GoogleSignInRequest({
+    required this.idToken,
+  });
+
+  factory GoogleSignInRequest.fromJson(Map<String, dynamic> json) =>
+      _$GoogleSignInRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GoogleSignInRequestToJson(this);
+}
+
+@JsonSerializable()
 class AuthResponse {
   final String token;
   final User user;

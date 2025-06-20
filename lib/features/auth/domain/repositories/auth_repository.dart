@@ -6,8 +6,7 @@ abstract class AuthRepository {
   Future<UserEntity> completeRegistration(
       String phoneNumber, String password, String pin);
   Future<UserEntity> login(String phoneNumber, String password);
-  Future<UserEntity> googleRegister(
-      String email, String displayName, String? photoUrl);
+  Future<UserEntity> googleRegister({required String googleIdToken});
   Future<List<String>> generateWalletMnemonic();
   Future<UserEntity> registerBlockchain(String userId, String walletAddress);
   Future<void> logout();

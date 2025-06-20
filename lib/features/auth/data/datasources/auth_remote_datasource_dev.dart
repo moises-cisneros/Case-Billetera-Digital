@@ -6,6 +6,9 @@ class DevelopmentAuthRemoteDataSource implements AuthRemoteDataSource {
   static const _devPhoneNumber = '+59170986680';
   static const _devPassword = 'password123';
 
+  // Static counter to alternate between new and existing user mocks for Google Sign-In
+  static int _googleSignInCallCount = 0;
+
   @override
   Future<void> requestSms(String phoneNumber) async {
     // Simular delay de red
@@ -76,24 +79,31 @@ class DevelopmentAuthRemoteDataSource implements AuthRemoteDataSource {
   }
 
   @override
-  Future<AuthResponse> googleAuth(
-      String email, String displayName, String? photoUrl) async {
+  Future<AuthResponse> signInWithGoogle(String googleIdToken) async {
     // Simulate network delay
     await Future.delayed(const Duration(seconds: 2));
 
-    // Mock response for Google OAuth registration
+    _googleSignInCallCount++;
+
+    // Alternate between a new user (pending_wallet) and an existing user (active)
+    final isNewUser =
+        _googleSignInCallCount % 2 != 0; // Odd calls simulate new user
+
+    String userStatus = isNewUser ? 'pending_wallet' : 'active';
+
+    // Mock response for Google OAuth
     return AuthResponse(
       token: 'google-dev-token-${DateTime.now().millisecondsSinceEpoch}',
       user: User(
-        id: 'google-user-id-123',
+        id: 'google-user-user-${DateTime.now().millisecondsSinceEpoch}',
         phoneNumber:
             '', // Phone number might not be available from Google OAuth directly
-        status: 'pending_wallet',
+        status: userStatus,
         kycLevel: 'none',
         createdAt: DateTime.now(),
-        email: email,
-        displayName: displayName,
-        photoUrl: photoUrl,
+        email: 'mock.user.${_googleSignInCallCount}@example.com',
+        displayName: 'Mock User ${_googleSignInCallCount}',
+        photoUrl: '',
       ),
     );
   }

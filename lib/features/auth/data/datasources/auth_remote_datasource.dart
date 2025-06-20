@@ -7,8 +7,7 @@ abstract class AuthRemoteDataSource {
   Future<AuthResponse> completeRegistration(
       String phoneNumber, String password, String pin);
   Future<AuthResponse> login(String phoneNumber, String password);
-  Future<AuthResponse> googleAuth(
-      String email, String displayName, String? photoUrl);
+  Future<AuthResponse> signInWithGoogle(String googleIdToken);
   Future<WalletGenerateResponse> generateWallet();
   Future<UserBlockchainRegisterResponse> registerBlockchain(
       String userId, String walletAddress);
@@ -73,10 +72,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<AuthResponse> googleAuth(
-      String email, String displayName, String? photoUrl) {
-    // TODO: implement googleAuth
-    throw UnimplementedError();
+  Future<AuthResponse> signInWithGoogle(String googleIdToken) async {
+    final response = await apiClient.googleSignIn(
+      GoogleSignInRequest(idToken: googleIdToken),
+    );
+
+    if (!response.success || response.data == null) {
+      throw Exception(response.error ?? 'Failed to authenticate with Google');
+    }
+    return response.data!;
   }
 
   @override

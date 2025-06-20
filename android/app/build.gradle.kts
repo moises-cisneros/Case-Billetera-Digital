@@ -2,8 +2,6 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
-    // Comentamos temporalmente el plugin de Google Services
-    // id("com.google.gms.google-services")
 }
 
 android {

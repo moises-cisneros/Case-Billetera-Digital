@@ -23,6 +23,10 @@ abstract class ApiClient {
   @POST('/auth/login')
   Future<ApiResponse<AuthResponse>> login(@Body() LoginRequest request);
 
+  @POST("/auth/google")
+  Future<ApiResponse<AuthResponse>> googleSignIn(
+      @Body() GoogleSignInRequest request);
+
   // Wallet endpoints
   @GET('/wallet/balance')
   Future<ApiResponse<WalletBalance>> getBalance();

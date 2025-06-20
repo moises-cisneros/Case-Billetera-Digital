@@ -6,11 +6,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:case_digital_wallet/core/config/app_config.dart';
 import 'package:case_digital_wallet/core/network/api_client.dart';
 import 'package:case_digital_wallet/features/auth/data/datasources/auth_remote_datasource.dart';
-import 'package:case_digital_wallet/features/auth/data/datasources/auth_remote_datasource_dev.dart';
 import 'package:case_digital_wallet/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:case_digital_wallet/features/auth/domain/repositories/auth_repository.dart';
 import 'package:case_digital_wallet/features/auth/domain/usecases/login_usecase.dart';
 import 'package:case_digital_wallet/features/auth/domain/usecases/register_usecase.dart';
+import 'package:case_digital_wallet/features/auth/domain/usecases/google_sign_in_usecase.dart';
 import 'package:case_digital_wallet/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:case_digital_wallet/features/wallet/data/datasources/wallet_remote_datasource.dart';
 import 'package:case_digital_wallet/features/wallet/data/repositories/wallet_repository_impl.dart';
@@ -44,13 +44,11 @@ Future<void> init() async {
   sl.registerLazySingleton(() => ApiClient(sl()));
 
   // Google Auth Service
-  sl.registerLazySingleton<GoogleAuthService>(() => MockGoogleAuthService());
+  sl.registerLazySingleton<GoogleAuthService>(() => GoogleAuthServiceImpl());
 
   // Data sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () =>
-        // AuthRemoteDataSourceImpl(sl(), sl()),
-        DevelopmentAuthRemoteDataSource(), // Usar implementación de desarrollo
+    () => AuthRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<WalletRemoteDataSource>(
     () => WalletRemoteDataSourceImpl(sl()),
@@ -68,6 +66,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => LoginUseCase(sl()));
   sl.registerLazySingleton(() => RegisterUseCase(sl()));
   sl.registerLazySingleton(() => GetBalanceUseCase(sl()));
+  sl.registerLazySingleton(() => GoogleSignInUseCase(sl()));
 
   // Blocs
   sl.registerFactory(() => AuthBloc(
@@ -75,6 +74,7 @@ Future<void> init() async {
         registerUseCase: sl(),
         authRepository: sl(),
         googleAuthService: sl(),
+        googleSignInUseCase: sl(),
       ));
   sl.registerFactory(() => WalletBloc(
         getBalanceUseCase: sl(),

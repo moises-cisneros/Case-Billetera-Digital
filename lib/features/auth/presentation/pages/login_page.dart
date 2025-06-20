@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                               : () {
                                   context
                                       .read<AuthBloc>()
-                                      .add(GoogleLoginRequested());
+                                      .add(const SignInWithGoogleEvent(""));
                                 },
                           icon: state is AuthLoading
                               ? const SizedBox(

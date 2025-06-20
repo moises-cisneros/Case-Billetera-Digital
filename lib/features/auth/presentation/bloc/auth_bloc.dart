@@ -5,6 +5,7 @@ import 'package:case_digital_wallet/features/auth/domain/usecases/login_usecase.
 import 'package:case_digital_wallet/features/auth/domain/usecases/register_usecase.dart';
 import 'package:case_digital_wallet/features/auth/domain/repositories/auth_repository.dart';
 import 'package:case_digital_wallet/features/auth/data/services/google_auth_service.dart';
+import 'package:case_digital_wallet/features/auth/domain/usecases/google_sign_in_usecase.dart';
 
 // Events
 abstract class AuthEvent extends Equatable {
@@ -44,7 +45,12 @@ class RegisterRequested extends AuthEvent {
   List<Object> get props => [phoneNumber, password, pin];
 }
 
-class GoogleLoginRequested extends AuthEvent {}
+class SignInWithGoogleEvent extends AuthEvent {
+  final String googleIdToken;
+  const SignInWithGoogleEvent(this.googleIdToken);
+  @override
+  List<Object> get props => [googleIdToken];
+}
 
 class LogoutRequested extends AuthEvent {}
 
@@ -77,11 +83,12 @@ class AuthLoading extends AuthState {}
 
 class AuthAuthenticated extends AuthState {
   final UserEntity user;
+  final String userStatus;
 
-  const AuthAuthenticated(this.user);
+  const AuthAuthenticated(this.user, {required this.userStatus});
 
   @override
-  List<Object> get props => [user];
+  List<Object> get props => [user, userStatus];
 }
 
 class WalletGenerated extends AuthState {
@@ -110,17 +117,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUseCase registerUseCase;
   final AuthRepository authRepository;
   final GoogleAuthService googleAuthService;
+  final GoogleSignInUseCase googleSignInUseCase;
 
   AuthBloc({
     required this.loginUseCase,
     required this.registerUseCase,
     required this.authRepository,
     required this.googleAuthService,
+    required this.googleSignInUseCase,
   }) : super(AuthInitial()) {
     on<CheckAuthenticationStatus>(_onCheckAuthenticationStatus);
     on<LoginRequested>(_onLoginRequested);
     on<RegisterRequested>(_onRegisterRequested);
-    on<GoogleLoginRequested>(_onGoogleLoginRequested);
+    on<SignInWithGoogleEvent>(_onSignInWithGoogle);
     on<GenerateWalletRequested>(_onGenerateWalletRequested);
     on<RegisterBlockchainRequested>(_onRegisterBlockchainRequested);
     on<LogoutRequested>(_onLogoutRequested);
@@ -136,7 +145,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (await authRepository.isLoggedIn()) {
       final user = await authRepository.getCurrentUser();
       if (user != null) {
-        emit(AuthAuthenticated(user));
+        emit(AuthAuthenticated(user, userStatus: user.status));
       } else {
         await authRepository.logout();
         emit(AuthUnauthenticated());
@@ -154,7 +163,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     try {
       final user = await loginUseCase(event.phoneNumber, event.password);
-      emit(AuthAuthenticated(user));
+      emit(AuthAuthenticated(user, userStatus: user.status));
     } catch (e) {
       emit(AuthError(e.toString()));
     }
@@ -172,29 +181,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         event.password,
         event.pin,
       );
-      emit(AuthAuthenticated(user));
+      emit(AuthAuthenticated(user, userStatus: user.status));
     } catch (e) {
       emit(AuthError(e.toString()));
     }
   }
 
-  Future<void> _onGoogleLoginRequested(
-    GoogleLoginRequested event,
+  Future<void> _onSignInWithGoogle(
+    SignInWithGoogleEvent event,
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
     try {
-      final googleUser = await googleAuthService.signIn();
-      if (googleUser['email'] != null) {
-        final user = await authRepository.googleRegister(
-          googleUser['email'],
-          googleUser['displayName'],
-          googleUser['photoUrl'],
-        );
-        emit(AuthAuthenticated(user));
-      } else {
-        emit(const AuthError('Google Sign-In failed: No email found.'));
-      }
+      final user = await googleSignInUseCase(event.googleIdToken);
+      emit(AuthAuthenticated(user, userStatus: user.status));
     } catch (e) {
       emit(AuthError(e.toString()));
     }
@@ -221,7 +221,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final user = await authRepository.registerBlockchain(
           event.userId, event.walletAddress);
-      emit(AuthAuthenticated(user));
+      emit(AuthAuthenticated(user, userStatus: user.status));
     } catch (e) {
       emit(AuthError(e.toString()));
     }

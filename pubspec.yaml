@@ -27,6 +27,8 @@ dependencies:
   # Authentication & Biometrics
   local_auth: ^2.2.0
   crypto: ^3.0.3
+  google_sign_in: ^6.1.0
+  flutter_dotenv: ^5.2.1
   
   # Camera & QR
   camera: ^0.10.6
@@ -71,6 +73,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - .env
   
   # fonts:
   #   - family: Inter

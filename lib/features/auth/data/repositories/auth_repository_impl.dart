@@ -69,17 +69,16 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<UserEntity> googleRegister(
-      String email, String displayName, String? photoUrl) async {
-    final response =
-        await remoteDataSource.googleAuth(email, displayName, photoUrl);
+  Future<UserEntity> googleRegister({required String googleIdToken}) async {
+    final response = await remoteDataSource.signInWithGoogle(googleIdToken);
 
     // Store token securely
     await secureStorage.write(key: 'auth_token', value: response.token);
 
     final user = UserEntity(
       id: response.user.id,
-      phoneNumber: response.user.phoneNumber,
+      phoneNumber: response
+          .user.phoneNumber, // This might be null for Google users initially
       status: response.user.status,
       kycLevel: response.user.kycLevel,
       createdAt: response.user.createdAt,

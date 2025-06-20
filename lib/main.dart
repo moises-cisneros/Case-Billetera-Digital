@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:case_digital_wallet/core/router/app_router.dart';
 import 'package:case_digital_wallet/core/theme/app_theme.dart';
 import 'package:case_digital_wallet/features/auth/presentation/bloc/auth_bloc.dart';
@@ -12,6 +13,9 @@ import 'package:case_digital_wallet/core/config/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load environment variables from .env file
+  await dotenv.load(fileName: ".env");
 
   // Initialize Firebase with default options
   try {
