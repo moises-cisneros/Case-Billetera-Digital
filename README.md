@@ -1,7 +1,3 @@
-Aquí tienes una versión mejorada y profesional del README, traducida al inglés, con el concepto de **"Resguardo"** ya incluido bajo el término "Auto-conversion to USDT (Safeguard)", y con una estructura más clara para el público internacional:
-
----
-
 # 💼 CASE - Digital Wallet
 
 A secure and user-friendly **digital wallet application built with Flutter**, tailored for the Bolivian market.
