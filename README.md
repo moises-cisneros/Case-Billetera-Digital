@@ -1,94 +1,121 @@
-# CASE - Billetera Digital
+Aquí tienes una versión mejorada y profesional del README, traducida al inglés, con el concepto de **"Resguardo"** ya incluido bajo el término "Auto-conversion to USDT (Safeguard)", y con una estructura más clara para el público internacional:
 
-Una aplicación de billetera digital desarrollada en Flutter para el mercado boliviano.
-## Backend
-https://github.com/moises-cisneros/Case-Wallet-Back
-## Características
+---
 
-- 🔐 Autenticación segura con SMS y PIN
-- 💰 Gestión de saldo en Bolivianos (Bs) y USDT
-- 📱 Pagos mediante códigos QR
-- 🔄 Conversión automática Bs ↔ USDT ("Resguardar")
-- 📊 Historial de transacciones
-- 🆔 Verificación de identidad (KYC)
-- 🔔 Notificaciones push
+# 💼 CASE - Digital Wallet
 
-## Arquitectura
+A secure and user-friendly **digital wallet application built with Flutter**, tailored for the Bolivian market.
 
-La aplicación sigue los principios de Clean Architecture con:
+## 🔗 Backend Repository
 
-- **Presentation Layer**: BLoC para gestión de estado
-- **Domain Layer**: Casos de uso y entidades
-- **Data Layer**: Repositorios y fuentes de datos
+[GitHub - Case Wallet Backend](https://github.com/moises-cisneros/Case-Wallet-Back)
 
-## Estructura del Proyecto
+---
+
+## 🚀 Features
+
+* 🔐 Secure authentication via **SMS OTP** and **PIN**
+* 💰 Wallet balance in **Bolivianos (Bs)** and **USDT**
+* 📱 **QR code-based** payments
+* 🔄 **Auto-conversion between Bs and USDT** ("Safeguard")
+* 📊 Transaction history
+* 🆔 **KYC** (Know Your Customer) identity verification
+* 🔔 Push notifications
+
+---
+
+## 🏗️ Architecture
+
+Built following **Clean Architecture** principles:
+
+* **Presentation Layer**: State management with BLoC
+* **Domain Layer**: Business logic and use cases
+* **Data Layer**: Repositories and data sources
+
+---
+
+## 📁 Project Structure
 
 ```
 lib/
 ├── core/
-│   ├── config/          # Configuración de la app
-│   ├── di/              # Inyección de dependencias
-│   ├── network/         # Cliente API
-│   ├── router/          # Navegación
-│   └── theme/           # Tema y estilos
+│   ├── config/          # App configuration
+│   ├── di/              # Dependency injection
+│   ├── network/         # API client
+│   ├── router/          # Navigation and routing
+│   └── theme/           # App theming and styling
 ├── features/
-│   ├── auth/            # Autenticación
-│   ├── home/            # Pantalla principal
-│   ├── wallet/          # Funcionalidades de billetera
-│   ├── kyc/             # Verificación de identidad
-│   └── crypto/          # Funcionalidades cripto
+│   ├── auth/            # Authentication module
+│   ├── home/            # Main dashboard
+│   ├── wallet/          # Wallet and balance features
+│   ├── kyc/             # Identity verification
+│   └── crypto/          # USDT and crypto operations
 └── main.dart
 ```
 
-## Dependencias Principales
+---
 
-- `flutter_bloc`: Gestión de estado
-- `go_router`: Navegación
-- `dio`: Cliente HTTP
-- `retrofit`: API REST
-- `flutter_secure_storage`: Almacenamiento seguro
-- `camera`: Acceso a cámara
-- `qr_flutter`: Generación de códigos QR
-- `qr_code_scanner`: Escaneo de códigos QR
-- `firebase_messaging`: Notificaciones push
+## 📦 Core Dependencies
 
-## Configuración
+* `flutter_bloc`: State management
+* `go_router`: Navigation
+* `dio`: HTTP client
+* `retrofit`: REST API client
+* `flutter_secure_storage`: Secure local storage
+* `camera`: Camera access
+* `qr_flutter`: QR code generation
+* `qr_code_scanner`: QR scanning
+* `firebase_messaging`: Push notifications
 
-1. Clona el repositorio
-2. Ejecuta `flutter pub get`
-3. Configura Firebase para notificaciones push
-4. Actualiza las URLs de API en `lib/core/config/app_config.dart`
-5. Ejecuta `flutter run`
+---
 
-## Funcionalidades Implementadas
+## ⚙️ Setup Instructions
 
-### Epic 1: Autenticación
-- ✅ Registro con número de teléfono
-- ✅ Verificación SMS con OTP
-- ✅ Creación de contraseña y PIN
-- ✅ Inicio de sesión
+1. Clone this repository.
+2. Run `flutter pub get`.
+3. Set up Firebase for push notifications.
+4. Update API URLs in `lib/core/config/app_config.dart`.
+5. Run the app with `flutter run`.
 
-### Epic 2: Billetera Fiat
-- ✅ Visualización de saldo
-- ✅ Pantalla principal con acciones rápidas
-- 🔄 Depósitos (en desarrollo)
-- 🔄 Transferencias (en desarrollo)
-- 🔄 Historial de transacciones (en desarrollo)
+---
+
+## ✅ Implemented Features
+
+### Epic 1: Authentication
+
+* ✅ Phone number registration
+* ✅ SMS OTP verification
+* ✅ Password and PIN creation
+* ✅ Login
+
+### Epic 2: Fiat Wallet
+
+* ✅ View balance
+* ✅ Quick actions dashboard
+* ✅ Deposits
+* ✅ Transfers 
+* 🔄 Transaction history *(in progress)*
 
 ### Epic 3: KYC
-- 🔄 Verificación de identidad (en desarrollo)
 
-### Epic 4: Cripto
-- 🔄 Funcionalidad "Resguardar" (en desarrollo)
+* 🔄 Identity verification *(in progress)*
 
-## Próximos Pasos
+### Epic 4: Crypto
 
-1. Implementar las pantallas de KYC
-2. Completar funcionalidades de wallet
-3. Integrar APIs reales
-4. Implementar notificaciones push
-5. Agregar tests unitarios y de integración
+* ✅ "Safeguard" feature: Bs ↔ USDT auto-conversion 
 
-## Licencia
+---
 
-Este proyecto es privado y confidencial.
+## 📌 Next Steps
+
+1. Implement full KYC flow
+2. Enable Firebase push notifications
+3. Add unit and integration tests
+
+---
+
+## 🔒 License
+
+This project is **private and confidential**. All rights reserved by the development team.
+
+
