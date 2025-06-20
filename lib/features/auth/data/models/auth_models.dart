@@ -87,6 +87,9 @@ class User {
   final String status;
   final String kycLevel;
   final DateTime createdAt;
+  final String? email;
+  final String? displayName;
+  final String? photoUrl;
 
   User({
     required this.id,
@@ -94,9 +97,44 @@ class User {
     required this.status,
     required this.kycLevel,
     required this.createdAt,
+    this.email,
+    this.displayName,
+    this.photoUrl,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
+}
+
+@JsonSerializable()
+class WalletGenerateResponse {
+  final List<String> mnemonic;
+  final String walletAddress;
+
+  WalletGenerateResponse({
+    required this.mnemonic,
+    required this.walletAddress,
+  });
+
+  factory WalletGenerateResponse.fromJson(Map<String, dynamic> json) =>
+      _$WalletGenerateResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$WalletGenerateResponseToJson(this);
+}
+
+@JsonSerializable()
+class UserBlockchainRegisterResponse {
+  final String status;
+  final String walletAddress;
+
+  UserBlockchainRegisterResponse({
+    required this.status,
+    required this.walletAddress,
+  });
+
+  factory UserBlockchainRegisterResponse.fromJson(Map<String, dynamic> json) =>
+      _$UserBlockchainRegisterResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserBlockchainRegisterResponseToJson(this);
 }

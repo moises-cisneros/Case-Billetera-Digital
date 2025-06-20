@@ -4,6 +4,7 @@ import 'package:case_digital_wallet/features/auth/domain/entities/user_entity.da
 import 'package:case_digital_wallet/features/auth/domain/usecases/login_usecase.dart';
 import 'package:case_digital_wallet/features/auth/domain/usecases/register_usecase.dart';
 import 'package:case_digital_wallet/features/auth/domain/repositories/auth_repository.dart';
+import 'package:case_digital_wallet/features/auth/data/services/google_auth_service.dart';
 
 // Events
 abstract class AuthEvent extends Equatable {
@@ -43,7 +44,24 @@ class RegisterRequested extends AuthEvent {
   List<Object> get props => [phoneNumber, password, pin];
 }
 
+class GoogleLoginRequested extends AuthEvent {}
+
 class LogoutRequested extends AuthEvent {}
+
+class GenerateWalletRequested extends AuthEvent {}
+
+class RegisterBlockchainRequested extends AuthEvent {
+  final String userId;
+  final String walletAddress;
+
+  const RegisterBlockchainRequested({
+    required this.userId,
+    required this.walletAddress,
+  });
+
+  @override
+  List<Object> get props => [userId, walletAddress];
+}
 
 // States
 abstract class AuthState extends Equatable {
@@ -66,6 +84,15 @@ class AuthAuthenticated extends AuthState {
   List<Object> get props => [user];
 }
 
+class WalletGenerated extends AuthState {
+  final List<String> mnemonicWords;
+
+  const WalletGenerated(this.mnemonicWords);
+
+  @override
+  List<Object> get props => [mnemonicWords];
+}
+
 class AuthUnauthenticated extends AuthState {}
 
 class AuthError extends AuthState {
@@ -82,15 +109,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LoginUseCase loginUseCase;
   final RegisterUseCase registerUseCase;
   final AuthRepository authRepository;
+  final GoogleAuthService googleAuthService;
 
   AuthBloc({
     required this.loginUseCase,
     required this.registerUseCase,
     required this.authRepository,
+    required this.googleAuthService,
   }) : super(AuthInitial()) {
     on<CheckAuthenticationStatus>(_onCheckAuthenticationStatus);
     on<LoginRequested>(_onLoginRequested);
     on<RegisterRequested>(_onRegisterRequested);
+    on<GoogleLoginRequested>(_onGoogleLoginRequested);
+    on<GenerateWalletRequested>(_onGenerateWalletRequested);
+    on<RegisterBlockchainRequested>(_onRegisterBlockchainRequested);
     on<LogoutRequested>(_onLogoutRequested);
 
     // Verificar estado inicial
@@ -140,6 +172,55 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         event.password,
         event.pin,
       );
+      emit(AuthAuthenticated(user));
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  Future<void> _onGoogleLoginRequested(
+    GoogleLoginRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      final googleUser = await googleAuthService.signIn();
+      if (googleUser['email'] != null) {
+        final user = await authRepository.googleRegister(
+          googleUser['email'],
+          googleUser['displayName'],
+          googleUser['photoUrl'],
+        );
+        emit(AuthAuthenticated(user));
+      } else {
+        emit(const AuthError('Google Sign-In failed: No email found.'));
+      }
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  Future<void> _onGenerateWalletRequested(
+    GenerateWalletRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      final mnemonic = await authRepository.generateWalletMnemonic();
+      emit(WalletGenerated(mnemonic));
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  Future<void> _onRegisterBlockchainRequested(
+    RegisterBlockchainRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      final user = await authRepository.registerBlockchain(
+          event.userId, event.walletAddress);
       emit(AuthAuthenticated(user));
     } catch (e) {
       emit(AuthError(e.toString()));

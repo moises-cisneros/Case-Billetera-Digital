@@ -30,7 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       // Simulate API call
       await Future.delayed(const Duration(seconds: 2));
-      
+
       if (mounted) {
         context.go('/otp-verification', extra: _phoneController.text);
       }
@@ -69,7 +69,7 @@ class _RegisterPageState extends State<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 32),
-                
+
                 // Title
                 const Text(
                   'Ingresa tu número de celular',
@@ -79,9 +79,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     color: AppTheme.textPrimary,
                   ),
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 // Subtitle
                 const Text(
                   'Te enviaremos un código de verificación por SMS',
@@ -90,16 +90,17 @@ class _RegisterPageState extends State<RegisterPage> {
                     color: AppTheme.textSecondary,
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // Phone input
                 TextFormField(
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(AppConfig.phoneNumberLength),
+                    LengthLimitingTextInputFormatter(
+                        AppConfig.phoneNumberLength),
                   ],
                   decoration: const InputDecoration(
                     labelText: 'Número de celular',
@@ -117,9 +118,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     return null;
                   },
                 ),
-                
+
                 const Spacer(),
-                
+
                 // Continue button
                 SizedBox(
                   width: double.infinity,
@@ -131,15 +132,41 @@ class _RegisterPageState extends State<RegisterPage> {
                             width: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
                             ),
                           )
                         : const Text('Continuar'),
                   ),
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      context.go('/google-registration-flow');
+                    },
+                    icon: Image.asset(
+                      'assets/icons/google_logo.png',
+                      height: 24,
+                    ),
+                    label: const Text('Registrarse con Google'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      backgroundColor: AppTheme.surfaceColor,
+                      foregroundColor: AppTheme.textPrimary,
+                      side: const BorderSide(color: AppTheme.textTertiary),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
                 // Terms
                 const Text(
                   'Al continuar, aceptas nuestros Términos de Servicio y Política de Privacidad',

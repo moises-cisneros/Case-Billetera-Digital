@@ -22,19 +22,37 @@ import 'package:case_digital_wallet/features/notifications/presentation/pages/no
 import 'package:case_digital_wallet/features/activity_log/presentation/pages/activity_log_page.dart';
 import 'package:case_digital_wallet/features/support/presentation/pages/support_page.dart';
 import 'package:case_digital_wallet/features/faq/presentation/pages/faq_page.dart';
+import 'package:case_digital_wallet/features/auth/presentation/pages/onboarding_page.dart';
+import 'package:case_digital_wallet/features/auth/presentation/pages/mnemonic_display_page.dart';
+import 'package:case_digital_wallet/features/auth/presentation/pages/mnemonic_confirm_page.dart';
+import 'package:case_digital_wallet/features/auth/presentation/pages/registration_success_page.dart';
+import 'package:case_digital_wallet/features/auth/presentation/pages/splash_page.dart';
+import 'package:case_digital_wallet/features/auth/presentation/pages/google_registration_flow_page.dart';
+import 'package:case_digital_wallet/features/auth/presentation/pages/google_login_flow_page.dart';
+import 'package:case_digital_wallet/core/di/injection_container.dart';
+import 'package:case_digital_wallet/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:flutter/material.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/welcome',
+    initialLocation: '/splash',
     redirect: (context, state) {
-      // TODO: Verificar si el usuario está autenticado
-      final bool isAuthenticated =
-          false; // Aquí implementaremos la lógica de sesión
-
-      // Si estamos en una ruta de autenticación y ya estamos autenticados
+      final authBloc = sl<AuthBloc>();
+      final bool isAuthenticated = authBloc.state is AuthAuthenticated;
+      final bool isSplash = state.matchedLocation == '/splash';
       final bool isAuthRoute = state.matchedLocation == '/welcome' ||
           state.matchedLocation == '/login' ||
-          state.matchedLocation == '/register';
+          state.matchedLocation == '/register' ||
+          state.matchedLocation == '/google-registration-flow' ||
+          state.matchedLocation == '/google-login-flow' ||
+          state.matchedLocation == '/onboarding' ||
+          state.matchedLocation == '/mnemonic-display' ||
+          state.matchedLocation == '/mnemonic-confirm' ||
+          state.matchedLocation == '/registration-success';
+
+      if (isSplash) {
+        return null;
+      }
 
       if (isAuthenticated && isAuthRoute) {
         return '/home';
@@ -45,14 +63,50 @@ class AppRouter {
       return null;
     },
     routes: [
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const SplashPage(),
+      ),
       // Auth routes
       GoRoute(
         path: '/welcome',
         builder: (context, state) => const WelcomePage(),
       ),
       GoRoute(
+        path: '/google-registration-flow',
+        builder: (context, state) => const GoogleRegistrationFlowPage(),
+      ),
+      GoRoute(
+        path: '/google-login-flow',
+        builder: (context, state) => const GoogleLoginFlowPage(),
+      ),
+
+      GoRoute(
         path: '/register',
         builder: (context, state) => const RegisterPage(),
+      ),
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingPage(),
+      ),
+      GoRoute(
+        path: '/mnemonic-display',
+        builder: (context, state) => const MnemonicDisplayPage(),
+      ),
+      GoRoute(
+        path: '/mnemonic-confirm',
+        builder: (context, state) {
+          final mnemonicWords = state.extra as List<String>?;
+          if (mnemonicWords == null) {
+            return const Text(
+                'Error: Mnemonic words not provided.'); // Handle error or redirect
+          }
+          return MnemonicConfirmPage(mnemonicWords: mnemonicWords);
+        },
+      ),
+      GoRoute(
+        path: '/registration-success',
+        builder: (context, state) => const RegistrationSuccessPage(),
       ),
       GoRoute(
         path: '/otp-verification',

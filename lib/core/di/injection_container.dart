@@ -17,6 +17,8 @@ import 'package:case_digital_wallet/features/wallet/data/repositories/wallet_rep
 import 'package:case_digital_wallet/features/wallet/domain/repositories/wallet_repository.dart';
 import 'package:case_digital_wallet/features/wallet/domain/usecases/get_balance_usecase.dart';
 import 'package:case_digital_wallet/features/wallet/presentation/bloc/wallet_bloc.dart';
+import 'package:case_digital_wallet/features/auth/data/services/google_auth_service.dart';
+import 'package:case_digital_wallet/features/auth/data/services/auth_service.dart';
 
 final sl = GetIt.instance;
 
@@ -25,6 +27,9 @@ Future<void> init() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
   sl.registerLazySingleton(() => const FlutterSecureStorage());
+
+  // Auth Service
+  sl.registerLazySingleton(() => AuthService(sl(), sl()));
 
   // Dio
   sl.registerLazySingleton(() {
@@ -38,6 +43,9 @@ Future<void> init() async {
   // API Client
   sl.registerLazySingleton(() => ApiClient(sl()));
 
+  // Google Auth Service
+  sl.registerLazySingleton<GoogleAuthService>(() => MockGoogleAuthService());
+
   // Data sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () =>
@@ -50,7 +58,7 @@ Future<void> init() async {
 
   // Repositories
   sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(sl(), sl()),
+    () => AuthRepositoryImpl(sl(), sl(), sl()),
   );
   sl.registerLazySingleton<WalletRepository>(
     () => WalletRepositoryImpl(sl()),
@@ -66,6 +74,7 @@ Future<void> init() async {
         loginUseCase: sl(),
         registerUseCase: sl(),
         authRepository: sl(),
+        googleAuthService: sl(),
       ));
   sl.registerFactory(() => WalletBloc(
         getBalanceUseCase: sl(),

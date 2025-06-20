@@ -54,7 +54,7 @@ class DevelopmentAuthRemoteDataSource implements AuthRemoteDataSource {
   @override
   Future<AuthResponse> login(String phoneNumber, String password) async {
     // Simular delay de red
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(seconds: 2));
 
     // Validar credenciales de desarrollo
     if (phoneNumber != _devPhoneNumber || password != _devPassword) {
@@ -73,5 +73,56 @@ class DevelopmentAuthRemoteDataSource implements AuthRemoteDataSource {
         createdAt: DateTime.now(),
       ),
     );
+  }
+
+  @override
+  Future<AuthResponse> googleAuth(
+      String email, String displayName, String? photoUrl) async {
+    // Simulate network delay
+    await Future.delayed(const Duration(seconds: 2));
+
+    // Mock response for Google OAuth registration
+    return AuthResponse(
+      token: 'google-dev-token-${DateTime.now().millisecondsSinceEpoch}',
+      user: User(
+        id: 'google-user-id-123',
+        phoneNumber:
+            '', // Phone number might not be available from Google OAuth directly
+        status: 'pending_wallet',
+        kycLevel: 'none',
+        createdAt: DateTime.now(),
+        email: email,
+        displayName: displayName,
+        photoUrl: photoUrl,
+      ),
+    );
+  }
+
+  @override
+  Future<WalletGenerateResponse> generateWallet() async {
+    // Simulate API call for mnemonic generation
+    await Future.delayed(const Duration(seconds: 2));
+    final mnemonic = List.generate(
+        12, (index) => 'word${index + 1}'); // Generate 12 mock words
+    final walletAddress =
+        '0x${List.generate(40, (index) => (index % 10).toString()).join()}'; // Mock wallet address
+    return WalletGenerateResponse(
+        mnemonic: mnemonic, walletAddress: walletAddress);
+  }
+
+  @override
+  Future<UserBlockchainRegisterResponse> registerBlockchain(
+      String userId, String walletAddress) async {
+    // Simulate API call for blockchain registration
+    await Future.delayed(const Duration(seconds: 2));
+    return UserBlockchainRegisterResponse(
+        status: 'registered', walletAddress: walletAddress);
+  }
+
+  @override
+  Future<void> logout() async {
+    // Simulate API call for logout
+    await Future.delayed(const Duration(seconds: 1));
+    return; // Simulate success
   }
 }
