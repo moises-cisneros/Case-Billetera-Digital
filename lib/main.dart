@@ -6,7 +6,7 @@ import 'package:case_digital_wallet/core/theme/app_theme.dart';
 import 'package:case_digital_wallet/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:case_digital_wallet/features/wallet/presentation/bloc/wallet_bloc.dart';
 import 'package:case_digital_wallet/core/di/injection_container.dart' as di;
-import 'package:case_digital_wallet/core/config/firebase_options.dart';
+//import 'package:case_digital_wallet/core/config/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +14,7 @@ void main() async {
   // Initialize Firebase with default options
   try {
     await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+      // options: DefaultFirebaseOptions.currentPlatform,
     );
   } catch (e) {
     debugPrint('Error initializing Firebase: $e');
