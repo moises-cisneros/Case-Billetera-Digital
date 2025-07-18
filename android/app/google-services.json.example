@@ -1,26 +1,36 @@
 {
   "project_info": {
-    "project_number": "123456789012",
-    "project_id": "case-digital-wallet-example",
-    "storage_bucket": "case-digital-wallet-example.appspot.com"
+    "project_number": "YOUR_PROJECT_NUMBER",
+    "project_id": "case-digital-wallet",
+    "storage_bucket": "case-digital-wallet.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:123456789012:android:abcdef1234567890",
+        "mobilesdk_app_id": "YOUR_APP_ID",
         "android_client_info": {
-          "package_name": "com.casewallet.app"
+          "package_name": "com.case.wallet"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "YOUR_CLIENT_ID",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "YOUR-API-KEY-HERE"
+          "current_key": "YOUR_API_KEY"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "YOUR_CLIENT_ID",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

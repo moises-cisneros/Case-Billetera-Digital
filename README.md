@@ -1,93 +1,186 @@
-# CASE - Billetera Digital
+# CASE - Digital Wallet
 
-Una aplicación de billetera digital desarrollada en Flutter para el mercado boliviano.
+A complete mobile digital wallet application developed in Flutter with advanced cryptocurrency and geolocation features.
 
-## Características
+## 🚀 Main Features
 
-- 🔐 Autenticación segura con SMS y PIN
-- 💰 Gestión de saldo en Bolivianos (Bs) y USDT
-- 📱 Pagos mediante códigos QR
-- 🔄 Conversión automática Bs ↔ USDT ("Resguardar")
-- 📊 Historial de transacciones
-- 🆔 Verificación de identidad (KYC)
-- 🔔 Notificaciones push
+### 💰 Digital Wallet
+- **Balance management** in Bolivianos (Bs) and cryptocurrencies
+- **Transfers** between users
+- **Deposits and withdrawals** of money
+- **Detailed transaction history**
+- **USDT safeguarding** to protect money value
 
-## Arquitectura
+### 🪙 Crypto Features
+- **Real-time cryptocurrency market**
+- **Buy and sell** cryptocurrencies
+- **Conversion** between fiat and crypto currencies
+- **Send cryptocurrencies** to external addresses
+- **Price charts** and market statistics
+- **Support for multiple cryptocurrencies**: Bitcoin, Ethereum, USDT, BNB, Solana
 
-La aplicación sigue los principios de Clean Architecture con:
+### 🗺️ Location Map
+- **Places that accept crypto** as payment method
+- **P2P ATMs** (people who exchange physical money for crypto)
+- **Traditional exchange houses**
+- **Filters by location type**
+- **Geolocation** to find nearby places
+- **Detailed information** for each location
+- **Interactive map** with Google Maps integration
+- **Location filtering** and search functionality
 
-- **Presentation Layer**: BLoC para gestión de estado
-- **Domain Layer**: Casos de uso y entidades
-- **Data Layer**: Repositorios y fuentes de datos
+### 🔐 Security and Authentication
+- **KYC verification** (Know Your Customer)
+- **Biometric authentication**
+- **Security PIN**
+- **SMS verification**
+- **Data encryption** for sensitive information
 
-## Estructura del Proyecto
+## 📱 Technologies Used
+
+- **Flutter** - Mobile development framework
+- **Dart** - Programming language
+- **BLoC Pattern** - State management
+- **Go Router** - Navigation
+- **Google Maps** - Maps and geolocation
+- **Firebase** - Backend and notifications
+- **Dio** - HTTP client
+- **GetIt** - Dependency injection
+- **Provider** - State management for BLoC
+
+## 🛠️ Installation and Setup
+
+### Prerequisites
+- Flutter SDK (version 3.16.0 or higher)
+- Dart SDK (version 3.2.0 or higher)
+- Android Studio / VS Code
+- Android device or emulator
+
+### Installation Steps
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/moises-cisneros/Case-Billetera-Digital.git
+cd Case-Billetera-Digital
+```
+
+2. **Install dependencies**
+```bash
+flutter pub get
+```
+
+3. **Configure Firebase** (optional)
+- Create a project in Firebase Console
+- Download `google-services.json` and place it in `android/app/`
+- Uncomment Firebase lines in `main.dart`
+
+4. **Configure Google Maps** (for map functionality)
+- Get a Google Maps API key
+- Add the key in `android/app/src/main/AndroidManifest.xml`
+
+5. **Run the application**
+```bash
+flutter run
+```
+
+## 📁 Project Structure
 
 ```
 lib/
 ├── core/
-│   ├── config/          # Configuración de la app
-│   ├── di/              # Inyección de dependencias
-│   ├── network/         # Cliente API
-│   ├── router/          # Navegación
-│   └── theme/           # Tema y estilos
+│   ├── config/          # App configurations
+│   ├── di/             # Dependency injection
+│   ├── network/        # HTTP client and APIs
+│   ├── router/         # Route configuration
+│   └── theme/          # Themes and styles
 ├── features/
-│   ├── auth/            # Autenticación
-│   ├── home/            # Pantalla principal
-│   ├── wallet/          # Funcionalidades de billetera
-│   ├── kyc/             # Verificación de identidad
-│   └── crypto/          # Funcionalidades cripto
-└── main.dart
+│   ├── auth/           # Authentication and registration
+│   ├── crypto/         # Cryptocurrency features
+│   ├── home/           # Main page
+│   ├── kyc/            # KYC verification
+│   ├── maps/           # Maps and locations
+│   ├── profile/        # User profile management
+│   ├── qr/             # QR code functionality
+│   ├── activities/     # User activity tracking
+│   ├── p2p/            # P2P management
+│   ├── commerce/       # Commerce management
+│   └── wallet/         # Wallet features
+└── main.dart           # Entry point
 ```
 
-## Dependencias Principales
+## 🔧 API Configuration
 
-- `flutter_bloc`: Gestión de estado
-- `go_router`: Navegación
-- `dio`: Cliente HTTP
-- `retrofit`: API REST
-- `flutter_secure_storage`: Almacenamiento seguro
-- `camera`: Acceso a cámara
-- `qr_flutter`: Generación de códigos QR
-- `qr_code_scanner`: Escaneo de códigos QR
-- `firebase_messaging`: Notificaciones push
+### CoinGecko API (Crypto Prices)
+The app uses mock data by default. To use real data:
+1. Register at [CoinGecko](https://www.coingecko.com/en/api)
+2. Get API key
+3. Configure in the crypto repository
 
-## Configuración
+### Google Maps API
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Enable Maps SDK for Android
+3. Create API credentials
+4. Add the key in AndroidManifest.xml
 
-1. Clona el repositorio
-2. Ejecuta `flutter pub get`
-3. Configura Firebase para notificaciones push
-4. Actualiza las URLs de API en `lib/core/config/app_config.dart`
-5. Ejecuta `flutter run`
+## 🎯 Key Features
 
-## Funcionalidades Implementadas
+### Crypto Market
+- List of cryptocurrencies with real-time prices
+- Historical price charts
+- Buy/sell functionality
+- Automatic currency conversion
+- Crypto transaction history
 
-### Epic 1: Autenticación
-- ✅ Registro con número de teléfono
-- ✅ Verificación SMS con OTP
-- ✅ Creación de contraseña y PIN
-- ✅ Inicio de sesión
+### Interactive Map
+- Location visualization on map
+- Service type filters
+- Detailed information for each location
+- Integrated navigation
+- Add new locations
+- **Fixed BLoC integration** - Resolved ProviderNotFound errors
 
-### Epic 2: Billetera Fiat
-- ✅ Visualización de saldo
-- ✅ Pantalla principal con acciones rápidas
-- 🔄 Depósitos (en desarrollo)
-- 🔄 Transferencias (en desarrollo)
-- 🔄 Historial de transacciones (en desarrollo)
+### P2P ATMs
+- List of verified people
+- Competitive exchange rates
+- Rating system
+- Contact information
+- Transaction history
 
-### Epic 3: KYC
-- 🔄 Verificación de identidad (en desarrollo)
+## 🔒 Security
 
-### Epic 4: Cripto
-- 🔄 Funcionalidad "Resguardar" (en desarrollo)
+- **Encryption** of sensitive data
+- **Two-factor authentication**
+- **Mandatory KYC verification**
+- **Security PIN** for transactions
+- **Audit logs** for all operations
 
-## Próximos Pasos
+## 📊 Project Status
 
-1. Implementar las pantallas de KYC
-2. Completar funcionalidades de wallet
-3. Integrar APIs reales
-4. Implementar notificaciones push
-5. Agregar tests unitarios y de integración
+- ✅ **Authentication and registration** - Completed
+- ✅ **Basic wallet** - Completed
+- ✅ **Crypto market** - Completed (with mock data)
+- ✅ **Location map** - Completed (UI + BLoC integration fixed)
+- ✅ **P2P ATMs** - Completed (UI)
+- ✅ **Profile management** - Completed
+- ✅ **QR functionality** - Completed
+- ✅ **Activity tracking** - Completed
+- 🔄 **Real API integration** - In progress
+- 🔄 **Complete backend** - In development
 
-## Licencia
+## 🐛 Recent Fixes
 
-Este proyecto es privado y confidencial.
+### Maps Feature (Latest Update)
+- **Fixed ProviderNotFound error** for MapsBloc
+- **Resolved BLoC integration** issues
+- **Updated dependency injection** configuration
+- **Cleaned up duplicate code** in maps_page.dart
+- **Added proper BlocProvider** in app router
+- **Ensured proper state management** for map functionality
+
+
+## 🙏 Acknowledgments
+
+- [CoinGecko](https://www.coingecko.com/) for cryptocurrency data
+- [Google Maps](https://developers.google.com/maps) for map functionality
+- [Flutter](https://flutter.dev/) for the development framework
+- [BLoC Pattern](https://bloclibrary.dev/) for state management

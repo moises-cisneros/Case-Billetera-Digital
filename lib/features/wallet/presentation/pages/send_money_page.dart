@@ -34,7 +34,7 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => QRScannerPage(
+        builder: (context) => SendMoneyQRScannerPage(
           onQRScanned: (data) {
             // Parse QR data and populate fields
             _handleQRData(data);
@@ -414,19 +414,19 @@ class _SendMoneyPageState extends State<SendMoneyPage> {
   }
 }
 
-class QRScannerPage extends StatefulWidget {
+class SendMoneyQRScannerPage extends StatefulWidget {
   final Function(String) onQRScanned;
 
-  const QRScannerPage({
+  const SendMoneyQRScannerPage({
     super.key,
     required this.onQRScanned,
   });
 
   @override
-  State<QRScannerPage> createState() => _QRScannerPageState();
+  State<SendMoneyQRScannerPage> createState() => _SendMoneyQRScannerPageState();
 }
 
-class _QRScannerPageState extends State<QRScannerPage> {
+class _SendMoneyQRScannerPageState extends State<SendMoneyQRScannerPage> {
   MobileScannerController cameraController = MobileScannerController();
   bool _isScanned = false;
 
