@@ -1,33 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:case_digital_wallet/core/router/app_router.dart';
 import 'package:case_digital_wallet/core/theme/app_theme.dart';
 import 'package:case_digital_wallet/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:case_digital_wallet/features/wallet/presentation/bloc/wallet_bloc.dart';
-import 'package:case_digital_wallet/features/crypto/presentation/bloc/crypto_bloc.dart';
-import 'package:case_digital_wallet/features/maps/presentation/bloc/maps_bloc.dart';
 import 'package:case_digital_wallet/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:case_digital_wallet/features/qr/presentation/bloc/qr_bloc.dart';
-import 'package:case_digital_wallet/features/activities/presentation/bloc/activity_bloc.dart';
 import 'package:case_digital_wallet/core/di/injection_container.dart' as di;
-//import 'package:case_digital_wallet/core/config/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase with default options
-  try {
-    await Firebase.initializeApp(
-      // options: DefaultFirebaseOptions.currentPlatform,
-    );
-  } catch (e) {
-    debugPrint('Error initializing Firebase: $e');
-    // Continuar la ejecución aunque Firebase falle
-  }
+  // Initialize Firebase - Comentado para desarrollo
+  // await Firebase.initializeApp();
 
   // Initialize dependencies
   await di.init();
+
   runApp(const CaseApp());
 }
 
@@ -40,16 +29,12 @@ class CaseApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => di.sl<AuthBloc>()),
         BlocProvider(create: (_) => di.sl<WalletBloc>()),
-        BlocProvider(create: (_) => di.sl<CryptoBloc>()),
-        BlocProvider(create: (_) => di.sl<MapsBloc>()),
         BlocProvider(create: (_) => di.sl<ProfileBloc>()),
-        BlocProvider(create: (_) => di.sl<QRBloc>()),
-        BlocProvider(create: (_) => di.sl<ActivityBloc>()),
       ],
       child: MaterialApp.router(
         title: 'CASE - Billetera Digital',
         theme: AppTheme.lightTheme,
-        routerConfig: appRouter,
+        routerConfig: AppRouter.router,
         debugShowCheckedModeBanner: false,
       ),
     );

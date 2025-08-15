@@ -63,13 +63,13 @@ class _CryptoMarketPageState extends State<CryptoMarketPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.error_outline,
                     size: 64,
                     color: AppTheme.errorColor,
                   ),
                   const SizedBox(height: 16),
-                  Text(
+                  const Text(
                     'Error al cargar los datos',
                     style: TextStyle(
                       fontSize: 18,
@@ -390,8 +390,10 @@ class _CryptoDetailSheetState extends State<_CryptoDetailSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildPriceStat('Precio BSD', 'Bs ${widget.crypto.priceBSD.toStringAsFixed(2)}'),
-              _buildPriceStat('Cambio 24h', '${widget.crypto.change24h.toStringAsFixed(2)}%'),
+              _buildPriceStat('Precio BSD',
+                  'Bs ${widget.crypto.priceBSD.toStringAsFixed(2)}'),
+              _buildPriceStat('Cambio 24h',
+                  '${widget.crypto.change24h.toStringAsFixed(2)}%'),
             ],
           ),
         ],
@@ -529,7 +531,8 @@ class _CryptoDetailSheetState extends State<_CryptoDetailSheet> {
           controller: _amountController,
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
-            labelText: 'Cantidad en ${_isBuying ? 'USD' : widget.crypto.symbol}',
+            labelText:
+                'Cantidad en ${_isBuying ? 'USD' : widget.crypto.symbol}',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
             ),
@@ -552,7 +555,7 @@ class _CryptoDetailSheetState extends State<_CryptoDetailSheet> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Recibirás:',
                   style: TextStyle(
                     color: AppTheme.textSecondary,
@@ -589,7 +592,9 @@ class _CryptoDetailSheetState extends State<_CryptoDetailSheet> {
               ),
             ),
             child: Text(
-              _isBuying ? 'Comprar ${widget.crypto.symbol}' : 'Vender ${widget.crypto.symbol}',
+              _isBuying
+                  ? 'Comprar ${widget.crypto.symbol}'
+                  : 'Vender ${widget.crypto.symbol}',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -625,4 +630,4 @@ class _CryptoDetailSheetState extends State<_CryptoDetailSheet> {
 
     Navigator.of(context).pop();
   }
-} 
+}

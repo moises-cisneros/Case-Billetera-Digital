@@ -93,7 +93,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
-    
+
     try {
       final user = await loginUseCase(event.phoneNumber, event.password);
       emit(AuthAuthenticated(user));
@@ -107,7 +107,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
-    
+
     try {
       final user = await registerUseCase.completeRegistration(
         event.phoneNumber,

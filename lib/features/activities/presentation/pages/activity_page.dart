@@ -42,7 +42,7 @@ class _ActivityPageState extends State<ActivityPage> {
                 if (state is ActivityLoading) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                
+
                 if (state is ActivityError) {
                   return Center(
                     child: Column(
@@ -53,23 +53,26 @@ class _ActivityPageState extends State<ActivityPage> {
                         Text('Error: ${state.message}'),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: () => context.read<ActivityBloc>().add(LoadUserActivities()),
+                          onPressed: () => context
+                              .read<ActivityBloc>()
+                              .add(LoadUserActivities()),
                           child: const Text('Reintentar'),
                         ),
                       ],
                     ),
                   );
                 }
-                
+
                 if (state is ActivityLoaded) {
                   if (state.activities.isEmpty) {
                     return _buildEmptyState();
                   }
-                  
+
                   return _buildActivityList(state.activities);
                 }
-                
-                return const Center(child: Text('No hay actividades disponibles'));
+
+                return const Center(
+                    child: Text('No hay actividades disponibles'));
               },
             ),
           ),
@@ -104,7 +107,7 @@ class _ActivityPageState extends State<ActivityPage> {
 
   Widget _buildFilterChip(String value, String label) {
     final isSelected = _selectedFilter == value;
-    
+
     return FilterChip(
       label: Text(label),
       selected: isSelected,
@@ -112,7 +115,7 @@ class _ActivityPageState extends State<ActivityPage> {
         setState(() {
           _selectedFilter = value;
         });
-        
+
         if (value == 'all') {
           context.read<ActivityBloc>().add(LoadUserActivities());
         } else {
@@ -129,7 +132,7 @@ class _ActivityPageState extends State<ActivityPage> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -138,7 +141,7 @@ class _ActivityPageState extends State<ActivityPage> {
             size: 80,
             color: AppTheme.textTertiary,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             'No hay actividades',
             style: TextStyle(
@@ -147,7 +150,7 @@ class _ActivityPageState extends State<ActivityPage> {
               color: AppTheme.textSecondary,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             'Tus transacciones aparecerán aquí',
             style: TextStyle(
@@ -172,12 +175,13 @@ class _ActivityPageState extends State<ActivityPage> {
   }
 
   Widget _buildActivityItem(dynamic activity) {
-    final isPositive = activity.type == 'deposit' || 
-                      (activity.type == 'crypto' && activity.metadata?['crypto_currency'] == 'USDT');
-    final isNegative = activity.type == 'payment' || 
-                      activity.type == 'transfer' || 
-                      activity.type == 'withdrawal';
-    
+    final isPositive = activity.type == 'deposit' ||
+        (activity.type == 'crypto' &&
+            activity.metadata?['crypto_currency'] == 'USDT');
+    final isNegative = activity.type == 'payment' ||
+        activity.type == 'transfer' ||
+        activity.type == 'withdrawal';
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -218,9 +222,11 @@ class _ActivityPageState extends State<ActivityPage> {
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(activity.status).withOpacity(0.1),
+                        color:
+                            _getStatusColor(activity.status).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -250,7 +256,8 @@ class _ActivityPageState extends State<ActivityPage> {
                     color: AppTheme.textTertiary,
                   ),
                 ),
-                if (activity.metadata != null && activity.metadata!['crypto_amount'] != null)
+                if (activity.metadata != null &&
+                    activity.metadata!['crypto_amount'] != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
@@ -273,16 +280,18 @@ class _ActivityPageState extends State<ActivityPage> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: isPositive 
-                      ? AppTheme.successColor 
-                      : isNegative 
-                          ? AppTheme.textPrimary 
+                  color: isPositive
+                      ? AppTheme.successColor
+                      : isNegative
+                          ? AppTheme.textPrimary
                           : AppTheme.textPrimary,
                 ),
               ),
               if (activity.recipientName != null || activity.senderName != null)
                 Text(
-                  isPositive ? 'De: ${activity.senderName}' : 'Para: ${activity.recipientName}',
+                  isPositive
+                      ? 'De: ${activity.senderName}'
+                      : 'Para: ${activity.recipientName}',
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppTheme.textTertiary,
@@ -358,7 +367,7 @@ class _ActivityPageState extends State<ActivityPage> {
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inDays > 0) {
       return 'Hace ${difference.inDays} día${difference.inDays > 1 ? 's' : ''}';
     } else if (difference.inHours > 0) {
@@ -385,4 +394,4 @@ class _ActivityPageState extends State<ActivityPage> {
       ),
     );
   }
-} 
+}

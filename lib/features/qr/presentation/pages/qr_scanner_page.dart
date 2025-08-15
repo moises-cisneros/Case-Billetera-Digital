@@ -97,10 +97,10 @@ class _QRScannerPageState extends State<QRScannerPage> {
 
   void _handleScannedCode(String code) {
     if (!_isScanning) return;
-    
+
     setState(() => _isScanning = false);
     _scannerController?.stop();
-    
+
     // Procesar el código QR
     context.read<QRBloc>().add(ScanQREvent(code));
   }
@@ -215,7 +215,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
                 child: Container(
                   width: 30,
                   height: 30,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     border: Border(
                       top: BorderSide(color: AppTheme.primaryColor, width: 5),
                       left: BorderSide(color: AppTheme.primaryColor, width: 5),
@@ -229,7 +229,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
                 child: Container(
                   width: 30,
                   height: 30,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     border: Border(
                       top: BorderSide(color: AppTheme.primaryColor, width: 5),
                       right: BorderSide(color: AppTheme.primaryColor, width: 5),
@@ -243,9 +243,10 @@ class _QRScannerPageState extends State<QRScannerPage> {
                 child: Container(
                   width: 30,
                   height: 30,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     border: Border(
-                      bottom: BorderSide(color: AppTheme.primaryColor, width: 5),
+                      bottom:
+                          BorderSide(color: AppTheme.primaryColor, width: 5),
                       left: BorderSide(color: AppTheme.primaryColor, width: 5),
                     ),
                   ),
@@ -257,9 +258,10 @@ class _QRScannerPageState extends State<QRScannerPage> {
                 child: Container(
                   width: 30,
                   height: 30,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     border: Border(
-                      bottom: BorderSide(color: AppTheme.primaryColor, width: 5),
+                      bottom:
+                          BorderSide(color: AppTheme.primaryColor, width: 5),
                       right: BorderSide(color: AppTheme.primaryColor, width: 5),
                     ),
                   ),
@@ -289,7 +291,9 @@ class _QRScannerPageState extends State<QRScannerPage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _isScanning ? AppTheme.errorColor : AppTheme.primaryColor,
+                    backgroundColor: _isScanning
+                        ? AppTheme.errorColor
+                        : AppTheme.primaryColor,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -308,9 +312,9 @@ class _QRScannerPageState extends State<QRScannerPage> {
               IconButton(
                 onPressed: () => _toggleFlash(),
                 icon: Icon(
-                  _scannerController?.torchEnabled == true 
-                    ? Icons.flash_off 
-                    : Icons.flash_on,
+                  _scannerController?.torchEnabled == true
+                      ? Icons.flash_off
+                      : Icons.flash_on,
                 ),
                 style: IconButton.styleFrom(
                   backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
@@ -432,4 +436,4 @@ class _QRScannerPageState extends State<QRScannerPage> {
       const SnackBar(content: Text('Historial de QR en desarrollo')),
     );
   }
-} 
+}

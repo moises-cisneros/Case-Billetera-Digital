@@ -14,7 +14,7 @@ class WelcomePage extends StatelessWidget {
           child: Column(
             children: [
               const Spacer(),
-              
+
               // Logo
               Container(
                 width: 120,
@@ -29,9 +29,9 @@ class WelcomePage extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Title
               const Text(
                 'CASE',
@@ -41,9 +41,9 @@ class WelcomePage extends StatelessWidget {
                   color: AppTheme.textPrimary,
                 ),
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               // Subtitle
               const Text(
                 'Tu billetera digital boliviana',
@@ -53,9 +53,9 @@ class WelcomePage extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Description
               const Text(
                 'Envía, recibe y resguarda tu dinero de forma segura. Convierte tus bolivianos a USDT con un solo toque.',
@@ -65,22 +65,20 @@ class WelcomePage extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const Spacer(),
-              
+
               // Buttons
               Column(
                 children: [
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () => context.go('/register'),
+                      onPressed: () => context.go('/privy-auth'),
                       child: const Text('Crear cuenta'),
                     ),
                   ),
-                  
                   const SizedBox(height: 16),
-                  
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton(
@@ -104,7 +102,7 @@ class WelcomePage extends StatelessWidget {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 32),
             ],
           ),

@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:case_digital_wallet/core/theme/app_theme.dart';
 import 'package:case_digital_wallet/core/config/app_config.dart';
-import 'package:case_digital_wallet/features/activities/presentation/pages/activity_page.dart';
-import 'package:case_digital_wallet/features/qr/presentation/pages/qr_scanner_page.dart';
-import 'package:case_digital_wallet/features/profile/presentation/pages/profile_page.dart';
-import 'package:case_digital_wallet/features/wallet/presentation/bloc/wallet_bloc.dart';
-import 'package:case_digital_wallet/features/crypto/presentation/bloc/crypto_bloc.dart';
-import 'package:case_digital_wallet/features/crypto/domain/entities/crypto_entity.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -19,21 +12,35 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
-  bool _isBalanceVisible = true;
 
-  @override
-  void initState() {
-    super.initState();
-    // Cargar datos al inicializar
-    context.read<WalletBloc>().add(GetBalanceRequested());
-    context.read<CryptoBloc>().add(LoadUserCryptoBalances());
-  }
+  // Mock data
+  final double _balanceBS = 1250.50;
+  final double _balanceUSDT = 45.32;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: _getCurrentTab(),
+        // Implementar las builders para las pestañas para home, activity, scan y profile
+        child: Builder(
+          builder: (context) {
+            switch (_selectedIndex) {
+              case 0:
+                return _buildHomeTab();
+              case 1:
+                return _buildActivityTab();
+              case 2:
+                return _buildScanTab();
+              case 3:
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _navigateTo(path: '/profile');
+                });
+                return const SizedBox.shrink();
+              default:
+                return _buildHomeTab();
+            }
+          },
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -122,253 +129,165 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget _buildBalanceCard() {
-    return BlocBuilder<WalletBloc, WalletState>(
-      builder: (context, walletState) {
-        return BlocBuilder<CryptoBloc, CryptoState>(
-          builder: (context, cryptoState) {
-            double balanceBS = 0.0;
-            double balanceUSDT = 0.0;
-            
-            if (walletState is WalletLoaded) {
-              balanceBS = walletState.balance.balanceBS;
-            }
-            
-            if (cryptoState is CryptoBalancesLoaded) {
-              final usdtBalance = cryptoState.balances.firstWhere(
-                (balance) => balance.symbol == 'USDT',
-                orElse: () => CryptoBalanceEntity(symbol: 'USDT', amount: 0.0),
-              );
-              balanceUSDT = usdtBalance.amount;
-            }
-            
-            return Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppTheme.primaryColor, Color(0xFF3B82F6)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppTheme.primaryColor, Color(0xFF3B82F6)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Saldo total',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 16,
                 ),
-                borderRadius: BorderRadius.circular(20),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Saldo total',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 16,
-                        ),
+              IconButton(
+                onPressed: () {
+                  // TODO: Toggle balance visibility
+                },
+                icon: const Icon(
+                  Icons.visibility,
+                  color: Colors.white70,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 8),
+
+          // Bolivianos balance
+          Row(
+            children: [
+              Text(
+                '${AppConfig.currency} ${_balanceBS.toStringAsFixed(2)}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // USDT balance
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Resguardado en USDT',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
                       ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _isBalanceVisible = !_isBalanceVisible;
-                          });
-                        },
-                        icon: Icon(
-                          _isBalanceVisible ? Icons.visibility_off : Icons.visibility,
-                          color: Colors.white70,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  // Bolivianos balance
-                  Row(
-                    children: [
-                      Text(
-                        _isBalanceVisible 
-                          ? '${AppConfig.currency} ${balanceBS.toStringAsFixed(2)}'
-                          : '${AppConfig.currency} •••••',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // USDT balance
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Resguardado en USDT',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
-                              ),
-                            ),
-                            Text(
-                              _isBalanceVisible 
-                                ? '${AppConfig.cryptoCurrency} ${balanceUSDT.toStringAsFixed(2)}'
-                                : '${AppConfig.cryptoCurrency} •••••',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                        ElevatedButton(
-                          onPressed: () => context.go('/resguardar'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: AppTheme.primaryColor,
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text(
-                            'Resguardar',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
+                    Text(
+                      '${AppConfig.cryptoCurrency} ${_balanceUSDT.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                ElevatedButton(
+                  onPressed: () => context.go('/resguardar'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: AppTheme.primaryColor,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                ],
-              ),
-            );
-          },
-        );
-      },
+                  child: const Text(
+                    'Resguardar',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildQuickActions() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Acciones rápidas',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Acciones rápidas',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _buildActionButton(
+                icon: Icons.add,
+                label: 'Cargar',
+                onTap: () => context.go('/deposit'),
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildActionCard(
-                  'Enviar',
-                  Icons.send,
-                  AppTheme.primaryColor,
-                  () => context.go('/send-money'),
-                ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildActionButton(
+                icon: Icons.send,
+                label: 'Enviar',
+                onTap: () => context.go('/send-money'),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildActionCard(
-                  'Recibir',
-                  Icons.qr_code,
-                  Colors.green,
-                  () => context.go('/receive-money'),
-                ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildActionButton(
+                icon: Icons.qr_code,
+                label: 'Cobrar',
+                onTap: () => context.go('/receive-money'),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildActionCard(
-                  'Depositar',
-                  Icons.account_balance_wallet,
-                  Colors.blue,
-                  () => context.go('/deposit'),
-                ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildActionButton(
+                icon: Icons.remove,
+                label: 'Retirar',
+                onTap: () => context.go('/withdraw'),
               ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _buildActionCard(
-                  'Crypto',
-                  Icons.currency_bitcoin,
-                  Colors.orange,
-                  () => context.go('/crypto-market'),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildActionCard(
-                  'P2P',
-                  Icons.swap_horiz,
-                  Colors.purple,
-                  () => context.go('/p2p-management'),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildActionCard(
-                  'Comercio',
-                  Icons.store,
-                  Colors.teal,
-                  () => context.go('/commerce-management'),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _buildActionCard(
-                  'Mapa',
-                  Icons.map,
-                  Colors.red,
-                  () => context.go('/maps'),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildActionCard(
-                  'QR Scanner',
-                  Icons.qr_code_scanner,
-                  Colors.indigo,
-                  () => context.go('/qr-scanner'),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildActionCard(
-                  'Actividades',
-                  Icons.history,
-                  Colors.brown,
-                  () => context.go('/activities'),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -538,67 +457,44 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget _getCurrentTab() {
-    switch (_selectedIndex) {
-      case 0:
-        return _buildHomeTab();
-      case 1:
-        return const ActivityPage();
-      case 2:
-        return const QRScannerPage();
-      case 3:
-        return const ProfilePage();
-      default:
-        return _buildHomeTab();
-    }
-  }
-
   Widget _buildActivityTab() {
-    return const ActivityPage();
-  }
-
-  Widget _buildActionCard(String label, IconData icon, Color color, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                icon,
-                color: color,
-                size: 24,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+    return const Center(
+      child: Text(
+        'Actividad',
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
+  }
+
+  Widget _buildProfileTab() {
+    return const Center(
+      child: Text(
+        'Perfil',
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildScanTab() {
+    return const Center(
+      child: Text(
+        'Escanear',
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  // Implementar las rutas de navegacion
+  void _navigateTo({required String path}) {
+    context.go(path);
   }
 }

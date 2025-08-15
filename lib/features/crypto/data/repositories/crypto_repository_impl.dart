@@ -52,9 +52,9 @@ class CryptoRepositoryImpl implements CryptoRepository {
     // Mock data - en producción vendría del backend
     await Future.delayed(const Duration(milliseconds: 500));
     return [
-      CryptoBalanceEntity(symbol: 'USDT', amount: 45.32),
-      CryptoBalanceEntity(symbol: 'BTC', amount: 0.0012),
-      CryptoBalanceEntity(symbol: 'ETH', amount: 0.023),
+      const CryptoBalanceEntity(symbol: 'USDT', amount: 45.32),
+      const CryptoBalanceEntity(symbol: 'BTC', amount: 0.0012),
+      const CryptoBalanceEntity(symbol: 'ETH', amount: 0.023),
     ];
   }
 
@@ -97,7 +97,8 @@ class CryptoRepositoryImpl implements CryptoRepository {
   }
 
   @override
-  Future<String?> sendCrypto(String cryptoId, double amount, String toAddress) async {
+  Future<String?> sendCrypto(
+      String cryptoId, double amount, String toAddress) async {
     // Mock implementation - en producción haría la transacción real
     await Future.delayed(const Duration(seconds: 1));
     return 'tx_hash_123456';
@@ -108,10 +109,10 @@ class CryptoRepositoryImpl implements CryptoRepository {
     try {
       // Obtener precio actual de la crypto
       final crypto = await getCryptoPrice(cryptoId);
-      
+
       // Convertir usando el precio actual
       final cryptoAmount = bsAmount / crypto.priceUSD;
-      
+
       // Aquí se haría la transacción real
       await Future.delayed(const Duration(seconds: 1));
       return true;
@@ -125,10 +126,10 @@ class CryptoRepositoryImpl implements CryptoRepository {
     try {
       // Obtener precio actual de la crypto
       final crypto = await getCryptoPrice(cryptoId);
-      
+
       // Convertir usando el precio actual
       final bsAmount = cryptoAmount * crypto.priceUSD;
-      
+
       // Aquí se haría la transacción real
       await Future.delayed(const Duration(seconds: 1));
       return true;
@@ -140,31 +141,45 @@ class CryptoRepositoryImpl implements CryptoRepository {
   // Helper methods
   String _getSymbolFromId(String id) {
     switch (id) {
-      case 'bitcoin': return 'BTC';
-      case 'ethereum': return 'ETH';
-      case 'tether': return 'USDT';
-      case 'binancecoin': return 'BNB';
-      case 'cardano': return 'ADA';
-      case 'solana': return 'SOL';
-      default: return id.toUpperCase();
+      case 'bitcoin':
+        return 'BTC';
+      case 'ethereum':
+        return 'ETH';
+      case 'tether':
+        return 'USDT';
+      case 'binancecoin':
+        return 'BNB';
+      case 'cardano':
+        return 'ADA';
+      case 'solana':
+        return 'SOL';
+      default:
+        return id.toUpperCase();
     }
   }
 
   String _getNameFromId(String id) {
     switch (id) {
-      case 'bitcoin': return 'Bitcoin';
-      case 'ethereum': return 'Ethereum';
-      case 'tether': return 'Tether';
-      case 'binancecoin': return 'Binance Coin';
-      case 'cardano': return 'Cardano';
-      case 'solana': return 'Solana';
-      default: return id;
+      case 'bitcoin':
+        return 'Bitcoin';
+      case 'ethereum':
+        return 'Ethereum';
+      case 'tether':
+        return 'Tether';
+      case 'binancecoin':
+        return 'Binance Coin';
+      case 'cardano':
+        return 'Cardano';
+      case 'solana':
+        return 'Solana';
+      default:
+        return id;
     }
   }
 
   List<CryptoEntity> _getMockCryptoData() {
     return [
-      CryptoEntity(
+      const CryptoEntity(
         id: 'bitcoin',
         symbol: 'BTC',
         name: 'Bitcoin',
@@ -172,7 +187,7 @@ class CryptoRepositoryImpl implements CryptoRepository {
         priceBSD: 310500.0,
         change24h: 2.5,
       ),
-      CryptoEntity(
+      const CryptoEntity(
         id: 'ethereum',
         symbol: 'ETH',
         name: 'Ethereum',
@@ -180,7 +195,7 @@ class CryptoRepositoryImpl implements CryptoRepository {
         priceBSD: 220800.0,
         change24h: -1.2,
       ),
-      CryptoEntity(
+      const CryptoEntity(
         id: 'tether',
         symbol: 'USDT',
         name: 'Tether',
@@ -188,7 +203,7 @@ class CryptoRepositoryImpl implements CryptoRepository {
         priceBSD: 6.9,
         change24h: 0.1,
       ),
-      CryptoEntity(
+      const CryptoEntity(
         id: 'binancecoin',
         symbol: 'BNB',
         name: 'Binance Coin',
@@ -198,4 +213,4 @@ class CryptoRepositoryImpl implements CryptoRepository {
       ),
     ];
   }
-} 
+}

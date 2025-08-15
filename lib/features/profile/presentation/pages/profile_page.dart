@@ -39,7 +39,7 @@ class _ProfilePageState extends State<ProfilePage> {
           if (state is ProfileLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          
+
           if (state is ProfileError) {
             return Center(
               child: Column(
@@ -50,19 +50,20 @@ class _ProfilePageState extends State<ProfilePage> {
                   Text('Error: ${state.message}'),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => context.read<ProfileBloc>().add(LoadUserProfile()),
+                    onPressed: () =>
+                        context.read<ProfileBloc>().add(LoadUserProfile()),
                     child: const Text('Reintentar'),
                   ),
                 ],
               ),
             );
           }
-          
+
           if (state is ProfileLoaded || state is ProfileUpdated) {
-            final profile = state is ProfileLoaded 
-                ? state.profile 
+            final profile = state is ProfileLoaded
+                ? state.profile
                 : (state as ProfileUpdated).profile;
-            
+
             return SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -76,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             );
           }
-          
+
           return const Center(child: Text('No hay datos disponibles'));
         },
       ),
@@ -91,8 +92,8 @@ class _ProfilePageState extends State<ProfilePage> {
             CircleAvatar(
               radius: 60,
               backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
-              backgroundImage: profile.profileImage != null 
-                  ? NetworkImage(profile.profileImage!) 
+              backgroundImage: profile.profileImage != null
+                  ? NetworkImage(profile.profileImage!)
                   : null,
               child: profile.profileImage == null
                   ? Icon(
@@ -140,7 +141,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: profile.isVerified 
+            color: profile.isVerified
                 ? AppTheme.successColor.withOpacity(0.1)
                 : AppTheme.warningColor.withOpacity(0.1),
             borderRadius: BorderRadius.circular(20),
@@ -151,8 +152,8 @@ class _ProfilePageState extends State<ProfilePage> {
               Icon(
                 profile.isVerified ? Icons.verified : Icons.warning,
                 size: 16,
-                color: profile.isVerified 
-                    ? AppTheme.successColor 
+                color: profile.isVerified
+                    ? AppTheme.successColor
                     : AppTheme.warningColor,
               ),
               const SizedBox(width: 4),
@@ -161,8 +162,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: profile.isVerified 
-                      ? AppTheme.successColor 
+                  color: profile.isVerified
+                      ? AppTheme.successColor
                       : AppTheme.warningColor,
                 ),
               ),
@@ -327,7 +328,7 @@ class _ProfilePageState extends State<ProfilePage> {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: isDestructive 
+            color: isDestructive
                 ? Colors.red.withOpacity(0.1)
                 : AppTheme.primaryColor.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
@@ -366,10 +367,10 @@ class _ProfilePageState extends State<ProfilePage> {
   void _showEditProfile(BuildContext context) {
     final currentState = context.read<ProfileBloc>().state;
     if (currentState is ProfileLoaded || currentState is ProfileUpdated) {
-      final profile = currentState is ProfileLoaded 
-          ? currentState.profile 
+      final profile = currentState is ProfileLoaded
+          ? currentState.profile
           : (currentState as ProfileUpdated).profile;
-      
+
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -404,4 +405,4 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-} 
+}

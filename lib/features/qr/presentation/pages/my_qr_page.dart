@@ -37,7 +37,7 @@ class _MyQRPageState extends State<MyQRPage> {
           if (state is QRLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          
+
           if (state is QRError) {
             return Center(
               child: Column(
@@ -48,14 +48,15 @@ class _MyQRPageState extends State<MyQRPage> {
                   Text('Error: ${state.message}'),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => context.read<QRBloc>().add(LoadUserQREvent()),
+                    onPressed: () =>
+                        context.read<QRBloc>().add(LoadUserQREvent()),
                     child: const Text('Reintentar'),
                   ),
                 ],
               ),
             );
           }
-          
+
           if (state is UserQRsLoaded) {
             return SingleChildScrollView(
               padding: const EdgeInsets.all(24),
@@ -68,7 +69,7 @@ class _MyQRPageState extends State<MyQRPage> {
               ),
             );
           }
-          
+
           return const Center(child: Text('No hay QR codes disponibles'));
         },
       ),
@@ -104,7 +105,8 @@ class _MyQRPageState extends State<MyQRPage> {
               borderRadius: BorderRadius.circular(12),
             ),
             child: QrImageView(
-              data: '{"type":"profile","userId":"user_123","name":"Juan Pérez"}',
+              data:
+                  '{"type":"profile","userId":"user_123","name":"Juan Pérez"}',
               version: QrVersions.auto,
               size: 200,
               backgroundColor: Colors.white,
@@ -137,14 +139,15 @@ class _MyQRPageState extends State<MyQRPage> {
           ),
         ),
         const SizedBox(height: 16),
-        ...qrs.map((qr) => _buildQRItem(qr)).toList(),
+        ...qrs.map((qr) => _buildQRItem(qr)),
       ],
     );
   }
 
   Widget _buildQRItem(dynamic qr) {
-    final isExpired = qr.expiresAt != null && qr.expiresAt.isBefore(DateTime.now());
-    
+    final isExpired =
+        qr.expiresAt != null && qr.expiresAt.isBefore(DateTime.now());
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -186,7 +189,8 @@ class _MyQRPageState extends State<MyQRPage> {
                     const SizedBox(width: 8),
                     if (isExpired)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
                           color: Colors.red.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4),
@@ -362,4 +366,4 @@ class _MyQRPageState extends State<MyQRPage> {
       ),
     );
   }
-} 
+}

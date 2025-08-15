@@ -20,12 +20,14 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<UserEntity> completeRegistration(String phoneNumber, String password, String pin) async {
-    final response = await remoteDataSource.completeRegistration(phoneNumber, password, pin);
-    
+  Future<UserEntity> completeRegistration(
+      String phoneNumber, String password, String pin) async {
+    final response =
+        await remoteDataSource.completeRegistration(phoneNumber, password, pin);
+
     // Store token securely
     await secureStorage.write(key: 'auth_token', value: response.token);
-    
+
     return UserEntity(
       id: response.user.id,
       phoneNumber: response.user.phoneNumber,
@@ -38,10 +40,10 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<UserEntity> login(String phoneNumber, String password) async {
     final response = await remoteDataSource.login(phoneNumber, password);
-    
+
     // Store token securely
     await secureStorage.write(key: 'auth_token', value: response.token);
-    
+
     return UserEntity(
       id: response.user.id,
       phoneNumber: response.user.phoneNumber,
